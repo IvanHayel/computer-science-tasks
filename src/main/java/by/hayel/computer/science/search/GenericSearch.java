@@ -5,6 +5,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -22,13 +23,29 @@ public class GenericSearch {
     while(!frontier.isEmpty()) {
       Node<T> currentNode = frontier.pop();
       T currentState = currentNode.getState();
-      if(isGoalReached.test(currentState)) {
-        return currentNode;
-      }
+      if(isGoalReached.test(currentState)) return currentNode;
       for(T child: successors.apply(currentState)) {
         if(explored.contains(child)) continue;
         explored.add(child);
         frontier.push(new Node<>(child, currentNode));
+      }
+    }
+    return null;
+  }
+
+  public static <T> Node<T> breadthFirstSearch(
+      T initial, Predicate<T> isGoalReached, Function<T, List<T>> successors) {
+    Queue<Node<T>> frontier = new LinkedList<>();
+    frontier.offer(new Node<>(initial, null));
+    Set<T> explored = new HashSet<>();
+    while (!frontier.isEmpty()) {
+      Node<T> currentNode = frontier.poll();
+      T currentState = currentNode.getState();
+      if(isGoalReached.test(currentState)) return currentNode;
+      for(T child: successors.apply(currentState)) {
+        if(explored.contains(child)) continue;
+        explored.add(child);
+        frontier.offer(new Node<>(child, currentNode));
       }
     }
     return null;
