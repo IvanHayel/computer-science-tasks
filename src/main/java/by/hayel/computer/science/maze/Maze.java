@@ -8,14 +8,14 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 @Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Maze {
   private static final String MAZE_BOUND = "|";
 
-  final int rows;
-  final int columns;
-  final MazeLocation start;
-  final MazeLocation goal;
+  int rows;
+  int columns;
+  MazeLocation start;
+  MazeLocation goal;
   Cell[][] grid;
 
   public Maze(int rows, int columns, MazeLocation start, MazeLocation goal, double sparseness) {
