@@ -62,7 +62,7 @@ public class Maze {
   }
 
   public void mark(List<MazeLocation> path) {
-    for(MazeLocation ml : path) {
+    for (MazeLocation ml : path) {
       grid[ml.getRow()][ml.getColumn()] = Cell.PATH;
     }
     grid[start.getRow()][start.getColumn()] = Cell.START;
@@ -70,11 +70,23 @@ public class Maze {
   }
 
   public void clear(List<MazeLocation> path) {
-    for(MazeLocation ml : path) {
+    for (MazeLocation ml : path) {
       grid[ml.getRow()][ml.getColumn()] = Cell.EMPTY;
     }
     grid[start.getRow()][start.getColumn()] = Cell.START;
     grid[goal.getRow()][goal.getColumn()] = Cell.GOAL;
+  }
+
+  public double euclideanDistance(MazeLocation location) {
+    int xDist = location.getColumn() - goal.getColumn();
+    int yDist = location.getRow() - goal.getRow();
+    return Math.sqrt(xDist * xDist + yDist * yDist);
+  }
+
+  public double manhattanDistance(MazeLocation location) {
+    int xDist = Math.abs(location.getColumn() - goal.getColumn());
+    int yDist = Math.abs(location.getRow() - goal.getRow());
+    return xDist + yDist;
   }
 
   @Override

@@ -2,13 +2,17 @@ package by.hayel.computer.science.search;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -46,6 +50,27 @@ public class GenericSearch {
         if(explored.contains(child)) continue;
         explored.add(child);
         frontier.offer(new Node<>(child, currentNode));
+      }
+    }
+    return null;
+  }
+
+  public static <T> Node<T> aStarSearch(
+      T initial, Predicate<T> isGoalReached, Function<T, List<T>> successors, ToDoubleFunction<T> heuristic) {
+    Queue<Node<T>> frontier = new PriorityQueue<>();
+    frontier.offer(new Node<>(initial, null, 0.0, heuristic.applyAsDouble(initial)));
+    Map<T, Double> explored = new HashMap<>();
+    explored.put(initial, 0.0);
+    while (!frontier.isEmpty()) {
+      Node<T> currentNode = frontier.poll();
+      T currentState = currentNode.getState();
+      if(isGoalReached.test(currentState)) return currentNode;
+      for(T child: successors.apply(currentState)) {
+        double newCost = currentNode.getCost() + 1;
+        if(!explored.containsKey(child) || explored.get(child) > newCost) {
+          explored.put(child, newCost);
+          frontier.offer(new Node<>(child, currentNode, newCost, heuristic.applyAsDouble(child)));
+        }
       }
     }
     return null;
