@@ -134,25 +134,34 @@ class MazeTest {
   void testMazeWithAll() {
     var maze = new Maze();
     log.info("Maze to test:\n{}", maze);
+    GenericSearch.enableStateCounter();
     var start = System.nanoTime();
     var dfsSolution =
         GenericSearch.depthFirstSearch(maze.getStart(), maze::isGoalReached, maze::successors);
     var end = System.nanoTime();
+    var dfsStates = GenericSearch.getStateCounterValue();
     var dfsTime = (end - start) / 1_000_000;
+    GenericSearch.enableStateCounter();
     start = System.nanoTime();
     var bfsSolution =
         GenericSearch.breadthFirstSearch(maze.getStart(), maze::isGoalReached, maze::successors);
     end = System.nanoTime();
+    var bfsStates = GenericSearch.getStateCounterValue();
     var bfsTime = (end - start) / 1_000_000;
+    GenericSearch.enableStateCounter();
     start = System.nanoTime();
     var aStarSolution =
         GenericSearch.aStarSearch(
             maze.getStart(), maze::isGoalReached, maze::successors, maze::manhattanDistance);
     end = System.nanoTime();
+    var aStarStates = GenericSearch.getStateCounterValue();
     var aStarTime = (end - start) / 1_000_000;
     showSolution(maze, dfsSolution, "DFS", dfsTime);
     showSolution(maze, bfsSolution, "BFS", bfsTime);
     showSolution(maze, aStarSolution, "A*", aStarTime);
+    log.info(
+        String.format(
+            "DFS - %d states, BFS - %d states, A* - %d states", dfsStates, bfsStates, aStarStates));
   }
 
   private void showSolution(

@@ -18,18 +18,32 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 public class GenericSearch {
+  private static boolean isStateCounterEnabled = false;
+  private static long stateCounter = 0;
+
+  public static void enableStateCounter() {
+    isStateCounterEnabled = true;
+    stateCounter = 0;
+  }
+
+  public static long getStateCounterValue() {
+    isStateCounterEnabled = false;
+    return stateCounter;
+  }
+
   public static <T> Node<T> depthFirstSearch(
       T initial, Predicate<T> isGoalReached, Function<T, List<T>> successors) {
     Deque<Node<T>> frontier = new LinkedList<>();
     frontier.push(new Node<>(initial, null));
     Set<T> explored = new HashSet<>();
     explored.add(initial);
-    while(!frontier.isEmpty()) {
+    while (!frontier.isEmpty()) {
+      if(isStateCounterEnabled) stateCounter++;
       Node<T> currentNode = frontier.pop();
       T currentState = currentNode.getState();
-      if(isGoalReached.test(currentState)) return currentNode;
-      for(T child: successors.apply(currentState)) {
-        if(explored.contains(child)) continue;
+      if (isGoalReached.test(currentState)) return currentNode;
+      for (T child : successors.apply(currentState)) {
+        if (explored.contains(child)) continue;
         explored.add(child);
         frontier.push(new Node<>(child, currentNode));
       }
@@ -43,11 +57,12 @@ public class GenericSearch {
     frontier.offer(new Node<>(initial, null));
     Set<T> explored = new HashSet<>();
     while (!frontier.isEmpty()) {
+      if(isStateCounterEnabled) stateCounter++;
       Node<T> currentNode = frontier.poll();
       T currentState = currentNode.getState();
-      if(isGoalReached.test(currentState)) return currentNode;
-      for(T child: successors.apply(currentState)) {
-        if(explored.contains(child)) continue;
+      if (isGoalReached.test(currentState)) return currentNode;
+      for (T child : successors.apply(currentState)) {
+        if (explored.contains(child)) continue;
         explored.add(child);
         frontier.offer(new Node<>(child, currentNode));
       }
@@ -56,18 +71,22 @@ public class GenericSearch {
   }
 
   public static <T> Node<T> aStarSearch(
-      T initial, Predicate<T> isGoalReached, Function<T, List<T>> successors, ToDoubleFunction<T> heuristic) {
+      T initial,
+      Predicate<T> isGoalReached,
+      Function<T, List<T>> successors,
+      ToDoubleFunction<T> heuristic) {
     Queue<Node<T>> frontier = new PriorityQueue<>();
     frontier.offer(new Node<>(initial, null, 0.0, heuristic.applyAsDouble(initial)));
     Map<T, Double> explored = new HashMap<>();
     explored.put(initial, 0.0);
     while (!frontier.isEmpty()) {
+      if(isStateCounterEnabled) stateCounter++;
       Node<T> currentNode = frontier.poll();
       T currentState = currentNode.getState();
-      if(isGoalReached.test(currentState)) return currentNode;
-      for(T child: successors.apply(currentState)) {
+      if (isGoalReached.test(currentState)) return currentNode;
+      for (T child : successors.apply(currentState)) {
         double newCost = currentNode.getCost() + 1;
-        if(!explored.containsKey(child) || explored.get(child) > newCost) {
+        if (!explored.containsKey(child) || explored.get(child) > newCost) {
           explored.put(child, newCost);
           frontier.offer(new Node<>(child, currentNode, newCost, heuristic.applyAsDouble(child)));
         }
@@ -111,7 +130,7 @@ public class GenericSearch {
   @FieldDefaults(level = AccessLevel.PRIVATE)
   public static class Node<T> implements Comparable<Node<T>> {
     final T state;
-    Node<T> parent;
+    final Node<T> parent;
     double cost;
     double heuristic;
 
