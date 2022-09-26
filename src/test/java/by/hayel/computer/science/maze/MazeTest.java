@@ -91,7 +91,7 @@ class MazeTest {
     var solution =
         GenericSearch.breadthFirstSearch(maze.getStart(), maze::isGoalReached, maze::successors);
     if (solution == null) {
-      log.error("There is no solution found using depth-first search!");
+      log.error("There is no solution found using breadth-first search!");
     } else {
       List<MazeLocation> path = GenericSearch.nodeToPath(solution);
       maze.mark(path);
@@ -120,7 +120,7 @@ class MazeTest {
         GenericSearch.aStarSearch(
             maze.getStart(), maze::isGoalReached, maze::successors, maze::manhattanDistance);
     if (solution == null) {
-      log.error("There is no solution found using depth-first search!");
+      log.error("There is no solution found using A* search!");
     } else {
       List<MazeLocation> path = GenericSearch.nodeToPath(solution);
       maze.mark(path);
