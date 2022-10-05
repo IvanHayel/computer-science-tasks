@@ -3,6 +3,7 @@ package by.hayel.computer.science.graph;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import by.hayel.computer.science.search.GenericSearch;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +26,25 @@ class UnweightedGraphTest {
   private static final String DETROIT = "Detroit";
   private static final String PHILADELPHIA = "Philadelphia";
   private static final String WASHINGTON = "Washington";
-  private static final List<String> CITIES = List.of(
-      SEATTLE, SAN_FRANCISCO, LOS_ANGELES,
-      RIVERSIDE, PHOENIX, CHICAGO, BOSTON,
-      NEW_YORK, ATLANTA, MIAMI, DALLAS, HOUSTON,
-      DETROIT, PHILADELPHIA, WASHINGTON);
+  private static final List<String> CITIES =
+      List.of(
+          SEATTLE,
+          SAN_FRANCISCO,
+          LOS_ANGELES,
+          RIVERSIDE,
+          PHOENIX,
+          CHICAGO,
+          BOSTON,
+          NEW_YORK,
+          ATLANTA,
+          MIAMI,
+          DALLAS,
+          HOUSTON,
+          DETROIT,
+          PHILADELPHIA,
+          WASHINGTON);
 
-  /**
-   * Method under test: {@link UnweightedGraph#UnweightedGraph(List)}
-   */
+  /** Method under test: {@link UnweightedGraph#UnweightedGraph(List)} */
   @Test
   void testConstructor() {
     ArrayList<Object> objectList = new ArrayList<>();
@@ -74,6 +85,15 @@ class UnweightedGraphTest {
     cityGraph.addEdge(NEW_YORK, PHILADELPHIA);
     cityGraph.addEdge(PHILADELPHIA, WASHINGTON);
     log.info("Graph:\n{}", cityGraph);
+    var dfs =
+        GenericSearch.depthFirstSearch(BOSTON, v -> v.equals(MIAMI), cityGraph::neighborsOf);
+    var bfs =
+        GenericSearch.breadthFirstSearch(BOSTON, v -> v.equals(MIAMI), cityGraph::neighborsOf);
+    var dfsPath = GenericSearch.nodeToPath(dfs);
+    var bfsPath = GenericSearch.nodeToPath(bfs);
+    if(dfs == null) log.error("No solution found using DFS!");
+    else log.info("DFS - Path from Boston to Miami: {}", dfsPath);
+    if(bfs == null) log.error("No solution found using BFS!");
+    else log.info("BFS - Path from Boston to Miami: {}", bfsPath);
   }
 }
-
