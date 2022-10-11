@@ -84,5 +84,7 @@ class WeightedGraphTest {
     cityGraph.addEdge(NEW_YORK, PHILADELPHIA, 81);
     cityGraph.addEdge(PHILADELPHIA, WASHINGTON, 123);
     log.info("Graph:\n{}", cityGraph);
+    var mst = cityGraph.minimumSpanningTree(0);
+    cityGraph.printWeightedPath(mst);
   }
 }

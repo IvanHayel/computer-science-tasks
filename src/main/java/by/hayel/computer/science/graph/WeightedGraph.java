@@ -1,11 +1,20 @@
 package by.hayel.computer.science.graph;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.function.IntConsumer;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
   public WeightedGraph(List<V> vertices) {
     super(vertices);
+  }
+
+  public static double totalWeight(List<WeightedEdge> path) {
+    return path.stream().mapToDouble(WeightedEdge::getWeight).sum();
   }
 
   public void addEdge(WeightedEdge edge) {
@@ -20,6 +29,38 @@ public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
 
   public void addEdge(V first, V second, double weight) {
     addEdge(indexOf(first), indexOf(second), weight);
+  }
+
+  public List<WeightedEdge> minimumSpanningTree(int start) {
+    var result = new LinkedList<WeightedEdge>();
+    if (start < 0 || start > (getVertexCount() - 1)) return result;
+    var queue = new PriorityQueue<WeightedEdge>();
+    var visited = new boolean[getVertexCount()];
+    IntConsumer visit =
+        index -> {
+          visited[index] = true;
+          edgesOf(index)
+              .forEach(
+                  edge -> {
+                    if (!visited[edge.getTo()]) queue.offer(edge);
+                  });
+        };
+    visit.accept(start);
+    while (!queue.isEmpty()) {
+      var edge = queue.poll();
+      if (visited[edge.getTo()]) continue;
+      result.add(edge);
+      visit.accept(edge.getTo());
+    }
+    return result;
+  }
+
+  public void printWeightedPath(List<WeightedEdge> wp) {
+    wp.forEach(
+        edge ->
+            log.info(
+                "{} {}> {}", vertexAt(edge.getFrom()), edge.getWeight(), vertexAt(edge.getTo())));
+    log.info("Total Weight: {}", totalWeight(wp));
   }
 
   @Override
