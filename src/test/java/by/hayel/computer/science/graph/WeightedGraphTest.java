@@ -86,5 +86,15 @@ class WeightedGraphTest {
     log.info("Graph:\n{}", cityGraph);
     var mst = cityGraph.minimumSpanningTree(0);
     cityGraph.printWeightedPath(mst);
+    var dijkstraResult = cityGraph.dijkstra(LOS_ANGELES);
+    var nameDistance = cityGraph.distanceArrayToDistanceMap(dijkstraResult.getDistances());
+    log.info("Distances from Los Angeles:");
+    nameDistance.forEach((name, distance) -> log.info(String.format("%s : %s", name, distance)));
+    log.info(System.lineSeparator());
+    log.info("Shortest path from Los Angeles to Boston:");
+    var path =
+        WeightedGraph.pathMapToPath(
+            cityGraph.indexOf(LOS_ANGELES), cityGraph.indexOf(BOSTON), dijkstraResult.getPathMap());
+    cityGraph.printWeightedPath(path);
   }
 }
